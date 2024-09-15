@@ -1,0 +1,1 @@
+ C:\\Si2\\flutter\\py_si_2_2024\\inmoviva\\.dart_tool\\flutter_build\\6dc71229d38663b31a882fa4d957314e\\native_assets.yaml: 
