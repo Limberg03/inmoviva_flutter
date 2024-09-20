@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: const SideBar(),
       appBar: AppBar(
-        title: const Text('Sistema Inmobiliario'),
+        title: const Text('Home'),
         backgroundColor: Colors.blue[700],
       ),
       body: SingleChildScrollView(
