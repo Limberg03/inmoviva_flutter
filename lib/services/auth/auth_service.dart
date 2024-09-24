@@ -40,6 +40,8 @@ class AuthService extends ChangeNotifier {
     } catch (e) {
       return 'error';
     }
+
+    
   }
 
   void trytoken(String? token) async {  //notf si existe el token

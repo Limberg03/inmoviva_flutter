@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inmoviva/screens/screens.dart';
+import 'package:inmoviva/screens/tipopropiedad/list_page.dart';
+import 'package:inmoviva/screens/tipopropiedad/save_page.dart';
 import 'package:inmoviva/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -102,6 +104,21 @@ class SideBar extends StatelessWidget {
                 onTap: () {
                   print('Click Formulario');
                 }),
+            ListTile(
+              leading: const Icon(Icons.business),
+              title: const Text('Gestionar Tipo de Propiedad'),
+              onTap: () {
+                bool irALista =
+                    true; // Puedes cambiar esta lógica para tomar decisiones
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ListPage(),
+                  ),
+                );
+              },
+            ),
             ListTile(
                 leading: const Icon(Icons.share),
                 title: const Text('Compartir'),
