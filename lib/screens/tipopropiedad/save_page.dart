@@ -3,29 +3,32 @@ import 'package:inmoviva/db/operation.dart';
 import 'package:inmoviva/models/note.dart';
 
 class SavePage extends StatelessWidget {
-  const SavePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Guardar"),
-          backgroundColor: Colors.blue[700],
-        ),
-        body: Container(
-          child: _FormSave(),
-        ));
-  }
-}
-
-class _FormSave extends StatelessWidget {
-  // const _FormSave({super.key});
+  SavePage({super.key});
   final _formKey = GlobalKey<FormState>();
   final nombreController = TextEditingController();
   final descripcionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    Note note = ModalRoute.of(context)?.settings.arguments as Note;
+    _init(note);
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Guardar"),
+          backgroundColor: Colors.blue[700],
+        ),
+        body: Container(
+          child: _buildForm(note),
+        ));
+  }
+
+  _init(Note note) {
+    nombreController.text = note.nombre; // Asignar el texto al controlador
+    descripcionController.text =
+        note.descripcion ?? ''; // Asignar el texto, asegurando que no sea nulo
+  }
+
+  Widget _buildForm(Note note) {
     return Container(
       padding: EdgeInsets.all(15),
       child: Form(
@@ -40,30 +43,37 @@ class _FormSave extends StatelessWidget {
                 return null;
               },
               decoration: InputDecoration(
-                  labelText: "titulo", border: OutlineInputBorder())),
+                  labelText: "Tipo de Propiedad",
+                  border: OutlineInputBorder())),
           SizedBox(
             height: 15,
           ),
           TextFormField(
               controller: descripcionController,
               maxLines: 5,
-              maxLength: 50, //
+              maxLength: 500, //
               validator: (value) {
                 if (value!.isEmpty) {
-                  return "Tiene que colcoar data";
+                  return "Tiene que colocar data";
                 }
                 return null;
               },
               decoration: InputDecoration(
-                  labelText: "contenido", border: OutlineInputBorder())),
+                  labelText: "Descripción", border: OutlineInputBorder())),
           ElevatedButton(
             child: Text("guardar"),
             onPressed: () {
               if (_formKey.currentState?.validate() ?? false) {
-                print("valido: " + nombreController.text);
-
-                Operation.insert(Note(id:1,nombre: nombreController.text, descripcion: descripcionController.text));
-
+                if (note.id != null) {
+                  //insertion
+                  note.nombre = nombreController.text;
+                  note.descripcion = descripcionController.text;
+                  Operation.update(note);
+                } else {
+                  Operation.insert(Note(
+                      nombre: nombreController.text,
+                      descripcion: descripcionController.text));
+                }
               }
             },
           )

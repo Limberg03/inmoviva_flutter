@@ -1,9 +1,10 @@
 class Note {
-  final int id;
-  final String nombre;
-  final String descripcion;
+  int? id; // El signo de interrogación indica que puede ser nulo.
+  String nombre; // Puede ser nulo.
+  String? descripcion; // Puede ser nulo.
 
-  Note({ required this.id, required this.nombre, required this.descripcion});
+  Note({this.id, required this.nombre, this.descripcion});
+  Note.empty() : nombre = '';
 
   Map<String, dynamic> toMap() {
     return {

@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
 
         'inicio': (_) => const Inicio(),
 
-        '/save': (_) => const SavePage(),
+        '/save': (_) =>  SavePage(),
       },
       theme: ThemeData.light().copyWith(
           scaffoldBackgroundColor: Colors.grey[400],
