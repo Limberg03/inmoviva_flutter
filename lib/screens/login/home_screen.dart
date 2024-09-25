@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inmoviva/components/components.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:inmoviva/screens/cliente/perfil_page.dart';
 import 'package:inmoviva/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -31,9 +32,29 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: const SideBar(),
       appBar: AppBar(
-        title: const Text('Home'),
-        backgroundColor: Colors.blue[700],
+      title: const Text('Home'),
+      backgroundColor: Colors.blue[700],
+      actions: [
+      // Círculo que redirecciona al perfil
+      Padding(
+        padding: const EdgeInsets.only(right: 16.0),
+        child: GestureDetector(
+          onTap: () {
+            // Navegar a la página de perfil
+            Navigator.of(context).push(
+              MaterialPageRoute(
+              builder: (context) => const PerfilPage(),
+              ),
+            );
+          },
+          child: CircleAvatar(
+            backgroundColor: Colors.blue[700],
+            child: const Icon(Icons.person, color: Colors.white),
+          ),
+        ),
       ),
+    ],
+  ),
       body: SingleChildScrollView(
         child: Column(
           children: [

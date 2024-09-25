@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inmoviva/components/components.dart';
+import 'package:inmoviva/screens/cliente/perfil_page.dart';
 import 'package:inmoviva/screens/screens.dart';
 import 'package:inmoviva/screens/tipopropiedad/save_page.dart';
 import 'package:inmoviva/services/auth/auth_service.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         'inicio': (_) => const Inicio(),
 
         '/save': (_) =>  SavePage(),
+        'perfil': (_)=> const PerfilPage(),
       },
       theme: ThemeData.light().copyWith(
           scaffoldBackgroundColor: Colors.grey[400],
