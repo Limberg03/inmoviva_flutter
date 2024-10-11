@@ -119,6 +119,32 @@ class SideBar extends StatelessWidget {
                 );
               },
             ),
+            
+            ListTile(
+              leading: const Icon(Icons.inventory), // Icono de inventario
+              title: const Text('Gestionar Inventario'),
+              onTap: () {
+                // Navegar a la lista de inventarios usando la ruta que definimos en el main
+                Navigator.pushNamed(context, '/inventario_list');
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(
+                  Icons.filter_alt), // Icono de filtro para búsqueda avanzada
+              title: const Text('Busqueda Avanzada'),
+              onTap: () {
+                bool irALista =
+                    true; // Puedes cambiar esta lógica para tomar decisiones
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ListPage(),
+                  ),
+                );
+              },
+            ),
             ListTile(
                 leading: const Icon(Icons.share),
                 title: const Text('Compartir'),

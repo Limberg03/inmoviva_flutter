@@ -5,6 +5,8 @@ import 'package:inmoviva/screens/screens.dart';
 import 'package:inmoviva/screens/tipopropiedad/save_page.dart';
 import 'package:inmoviva/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
+import 'package:inmoviva/screens/inventario/inventario_list_page.dart';  // Importa la página de lista de inventarios
+import 'package:inmoviva/screens/inventario/inventario_form_page.dart';  // Importa la página del formulario de inventario
 
 void main() {
   runApp(const AppState());
@@ -48,7 +50,12 @@ class MyApp extends StatelessWidget {
         'inicio': (_) => const Inicio(),
 
         '/save': (_) =>  SavePage(),
+        
         'perfil': (_)=> const PerfilPage(),
+
+        // Añadimos las rutas para Inventario
+        '/inventario_list': (_) => InventarioListPage(),
+        '/inventario_form': (_) => InventarioFormPage(),
       },
       theme: ThemeData.light().copyWith(
           scaffoldBackgroundColor: Colors.grey[400],
