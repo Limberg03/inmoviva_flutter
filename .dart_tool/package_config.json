@@ -134,6 +134,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "intl",
+      "rootUri": "file:///C:/Users/angel/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.17.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "js",
       "rootUri": "file:///C:/Users/angel/AppData/Local/Pub/Cache/hosted/pub.dev/js-0.6.7",
       "packageUri": "lib/",
@@ -362,7 +368,7 @@
       "languageVersion": "3.4"
     }
   ],
-  "generated": "2024-10-11T05:03:25.732340Z",
+  "generated": "2024-10-12T02:34:55.987767Z",
   "generator": "pub",
   "generatorVersion": "3.5.0",
   "flutterRoot": "file:///C:/flutter",

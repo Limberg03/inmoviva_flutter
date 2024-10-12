@@ -9,6 +9,7 @@ class Inventario {
   int? nroHabitaciones;
   int? nroBanos;
   String? imagen; // Path de la imagen o URL
+  int? tipoPropiedadId; // Relación con el tipo de propiedad (Note)
 
   Inventario({
     this.id,
@@ -21,6 +22,7 @@ class Inventario {
     this.nroHabitaciones,
     this.nroBanos,
     this.imagen,
+    this.tipoPropiedadId, // Añadir este campo
   });
 
   Map<String, dynamic> toMap() {
@@ -35,6 +37,7 @@ class Inventario {
       'nro_habitaciones': nroHabitaciones,
       'nro_banos': nroBanos,
       'imagen': imagen,
+      'tipo_propiedad_id': tipoPropiedadId, // Añadir este campo
     };
   }
 
@@ -50,6 +53,7 @@ class Inventario {
       nroHabitaciones: map['nro_habitaciones'],
       nroBanos: map['nro_banos'],
       imagen: map['imagen'],
+      tipoPropiedadId: map['tipo_propiedad_id'], // Añadir este campo
     );
   }
 }

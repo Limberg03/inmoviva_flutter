@@ -119,7 +119,6 @@ class SideBar extends StatelessWidget {
                 );
               },
             ),
-            
             ListTile(
               leading: const Icon(Icons.inventory), // Icono de inventario
               title: const Text('Gestionar Inventario'),
@@ -128,7 +127,6 @@ class SideBar extends StatelessWidget {
                 Navigator.pushNamed(context, '/inventario_list');
               },
             ),
-
             ListTile(
               leading: const Icon(
                   Icons.filter_alt), // Icono de filtro para búsqueda avanzada

@@ -1,9 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:inmoviva/db/db_helper.dart';
 import 'package:inmoviva/models/inventario.dart';
-// import '../models/inventario.dart'; // Removed incorrect import
+import 'package:inmoviva/models/note.dart'; // Importamos el modelo de Note
 import 'inventario_form_page.dart';
 
 class InventarioListPage extends StatefulWidget {
@@ -23,7 +22,6 @@ class _InventarioListPageState extends State<InventarioListPage> {
     _loadInventarios(); // Cargar los inventarios desde la base de datos
   }
 
-  // Cargar inventarios desde la base de datos
   Future<void> _loadInventarios() async {
     List<Inventario> loadedInventarios = await _dbHelper.getInventarios();
     setState(() {
@@ -32,7 +30,6 @@ class _InventarioListPageState extends State<InventarioListPage> {
     });
   }
 
-  // Filtrar inventarios en función del término de búsqueda
   void _filterInventarios(String query) {
     setState(() {
       searchQuery = query;
@@ -48,22 +45,10 @@ class _InventarioListPageState extends State<InventarioListPage> {
     });
   }
 
-  // Agregar un nuevo inventario
-  Future<void> _addInventario(Inventario inventario) async {
-    await _dbHelper.insertInventario(inventario);
-    _loadInventarios();
-  }
-
-  // Actualizar un inventario existente
-  Future<void> _updateInventario(Inventario inventario) async {
-    await _dbHelper.updateInventario(inventario);
-    _loadInventarios();
-  }
-
-  // Eliminar un inventario
-  Future<void> _deleteInventario(int id) async {
-    await _dbHelper.deleteInventario(id);
-    _loadInventarios();
+  // Obtener el tipo de propiedad desde SQLite
+  Future<Note?> _getTipoPropiedad(int? id) async {
+    if (id == null) return null;
+    return await _dbHelper.getTipoPropiedadById(id); // Usamos la función de SQLite
   }
 
   @override
@@ -71,6 +56,7 @@ class _InventarioListPageState extends State<InventarioListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Inventarios"),
+        backgroundColor: Colors.blue[800],
       ),
       body: Column(
         children: [
@@ -96,38 +82,126 @@ class _InventarioListPageState extends State<InventarioListPage> {
                     itemCount: filteredInventarios.length,
                     itemBuilder: (context, index) {
                       final inventario = filteredInventarios[index];
-                      return ListTile(
-                        title: Text(inventario.direccion ?? 'Sin dirección'),
-                        subtitle: Text('Precio: ${inventario.precio ?? 0} USD'),
-                        leading: inventario.imagen != null
-                            ? Image.file(File(inventario.imagen!))
-                            : Icon(Icons.image),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () async {
-                                final updatedInventario = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        InventarioFormPage(inventario: inventario),
+                      return FutureBuilder<Note?>(
+                        future: _getTipoPropiedad(inventario.tipoPropiedadId), // Obtener el tipo de propiedad
+                        builder: (context, snapshot) {
+                          final tipoPropiedad = snapshot.data;
+                          return Card(
+                            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                            elevation: 4, // Añade sombra
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 70,
+                                    height: 70,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      color: Colors.grey[300],
+                                    ),
+                                    child: inventario.imagen != null
+                                        ? ClipRRect(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            child: Image.file(
+                                              File(inventario.imagen!),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                        : Icon(Icons.image, color: Colors.grey[600]),
                                   ),
-                                );
-                                if (updatedInventario != null) {
-                                  _updateInventario(updatedInventario);
-                                }
-                              },
+                                  SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          inventario.direccion ?? 'Sin dirección',
+                                          style: TextStyle(
+                                            color: Colors.blue[800],
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Precio: ${inventario.precio?.toStringAsFixed(2) ?? 'No disponible'} USD',
+                                          style: TextStyle(
+                                            color: Colors.green[700],
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Estado: ${inventario.estado ?? 'No disponible'}',
+                                          style: TextStyle(
+                                            color: Colors.orange[700],
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        if (tipoPropiedad != null)
+                                          Text(
+                                            'Tipo de Propiedad: ${tipoPropiedad.nombre}',
+                                            style: TextStyle(
+                                              color: Colors.purple[700],
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        Text(
+                                          'Superficie: ${inventario.superficie?.toStringAsFixed(2) ?? 'No disponible'} m²',
+                                          style: TextStyle(
+                                            color: Colors.blueGrey,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Habitaciones: ${inventario.nroHabitaciones ?? 'No disponible'}',
+                                          style: TextStyle(
+                                            color: Colors.teal,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Baños: ${inventario.nroBanos ?? 'No disponible'}',
+                                          style: TextStyle(
+                                            color: Colors.indigo,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.edit, color: Colors.blue[700]),
+                                    onPressed: () async {
+                                      final updatedInventario = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => InventarioFormPage(
+                                            inventario: inventario,
+                                          ),
+                                        ),
+                                      );
+                                      if (updatedInventario != null) {
+                                        _loadInventarios();
+                                      }
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red[700]),
+                                    onPressed: () {
+                                      _dbHelper.deleteInventario(inventario.id!);
+                                      _loadInventarios();
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                _deleteInventario(inventario.id!);
-                              },
-                            ),
-                          ],
-                        ),
+                          );
+                        },
                       );
                     },
                   ),
@@ -143,10 +217,11 @@ class _InventarioListPageState extends State<InventarioListPage> {
             ),
           );
           if (newInventario != null) {
-            _addInventario(newInventario);
+            _loadInventarios();
           }
         },
         child: Icon(Icons.add),
+        backgroundColor: Colors.blue[800],
       ),
     );
   }
