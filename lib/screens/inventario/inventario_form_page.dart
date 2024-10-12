@@ -84,6 +84,10 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
         await _dbHelper.insertInventario(inventario);
       }
 
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Inventario guardado correctamente')),
+      );
+
       Navigator.pop(context, inventario);
     }
   }
@@ -102,79 +106,60 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                _buildTextField(_direccionController, 'Dirección', 'Por favor ingresa la dirección'),
-                SizedBox(height: 16),
-                _buildTextField(_precioController, 'Precio', 'Por favor ingresa el precio', keyboardType: TextInputType.number),
-                SizedBox(height: 16),
-                _buildTextField(_estadoController, 'Estado', 'Por favor ingresa el estado'),
-                SizedBox(height: 16),
-                _buildTextField(_superficieController, 'Superficie', 'Por favor ingresa la superficie', keyboardType: TextInputType.number),
-                SizedBox(height: 16),
-                _buildTextField(_descripcionController, 'Descripción', null, maxLines: 3),
-                SizedBox(height: 16),
-                _buildTextField(_nroHabitacionesController, 'Número de Habitaciones', 'Por favor ingresa el número de habitaciones', keyboardType: TextInputType.number),
-                SizedBox(height: 16),
-                _buildTextField(_nroBanosController, 'Número de Baños', 'Por favor ingresa el número de baños', keyboardType: TextInputType.number),
-                SizedBox(height: 20),
-                FutureBuilder<List<Note>>(
-                  future: _getTiposDePropiedad(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) return CircularProgressIndicator();
-                    return DropdownButtonFormField<int>(
-                      value: _selectedTipoPropiedadId,
-                      items: snapshot.data!.map((note) {
-                        return DropdownMenuItem<int>(
-                          value: note.id,
-                          child: Text(note.nombre),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedTipoPropiedadId = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Tipo de Propiedad',
-                        border: OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      validator: (value) => value == null ? 'Por favor selecciona un tipo de propiedad' : null,
-                    );
-                  },
+                _buildCard(
+                  child: _buildTextField(_direccionController, 'Dirección', 'Por favor ingresa la dirección', Icons.location_on),
                 ),
-                SizedBox(height: 20),
-                _imageFile != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.file(_imageFile!, width: 150, height: 150, fit: BoxFit.cover),
-                      )
-                    : Text('Ninguna imagen seleccionada'),
-                SizedBox(height: 20),
-                ElevatedButton.icon(
-                  icon: Icon(Icons.image),
-                  label: Text('Seleccionar Imagen'),
-                  onPressed: _pickImage,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[800],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
+                _buildCard(
+                  child: _buildTextField(_precioController, 'Precio', 'Por favor ingresa el precio', Icons.attach_money, keyboardType: TextInputType.number),
+                ),
+                _buildCard(
+                  child: _buildTextField(_estadoController, 'Estado', 'Por favor ingresa el estado', Icons.info),
+                ),
+                _buildCard(
+                  child: _buildTextField(_superficieController, 'Superficie', 'Por favor ingresa la superficie', Icons.square_foot, keyboardType: TextInputType.number),
+                ),
+                _buildCard(
+                  child: _buildTextField(_descripcionController, 'Descripción', null, Icons.description, maxLines: 3),
+                ),
+                _buildCard(
+                  child: _buildTextField(_nroHabitacionesController, 'Número de Habitaciones', 'Por favor ingresa el número de habitaciones', Icons.bed, keyboardType: TextInputType.number),
+                ),
+                _buildCard(
+                  child: _buildTextField(_nroBanosController, 'Número de Baños', 'Por favor ingresa el número de baños', Icons.bathtub, keyboardType: TextInputType.number),
+                ),
+                _buildCard(
+                  child: FutureBuilder<List<Note>>(
+                    future: _getTiposDePropiedad(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return CircularProgressIndicator();
+                      return DropdownButtonFormField<int>(
+                        value: _selectedTipoPropiedadId,
+                        items: snapshot.data!.map((note) {
+                          return DropdownMenuItem<int>(
+                            value: note.id,
+                            child: Text(note.nombre),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedTipoPropiedadId = value;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Tipo de Propiedad',
+                          border: OutlineInputBorder(),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        validator: (value) => value == null ? 'Por favor selecciona un tipo de propiedad' : null,
+                      );
+                    },
                   ),
                 ),
                 SizedBox(height: 20),
-                ElevatedButton.icon(
-                  icon: Icon(Icons.save),
-                  label: Text('Guardar'),
-                  onPressed: _saveInventario,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[700],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                  ),
-                ),
+                _buildImagePicker(),
+                SizedBox(height: 20),
+                _buildSaveButton(),
               ],
             ),
           ),
@@ -183,10 +168,11 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String labelText, String? errorMessage, {TextInputType keyboardType = TextInputType.text, int maxLines = 1}) {
+  Widget _buildTextField(TextEditingController controller, String labelText, String? errorMessage, IconData icon, {TextInputType keyboardType = TextInputType.text, int maxLines = 1}) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
+        prefixIcon: Icon(icon),
         labelText: labelText,
         border: OutlineInputBorder(),
         filled: true,
@@ -200,6 +186,58 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
         }
         return null;
       },
+    );
+  }
+
+  Widget _buildCard({required Widget child}) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: child,
+      ),
+    );
+  }
+
+  Widget _buildImagePicker() {
+    return Column(
+      children: [
+        _imageFile != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.file(_imageFile!, width: 150, height: 150, fit: BoxFit.cover),
+              )
+            : Text('Ninguna imagen seleccionada'),
+        SizedBox(height: 20),
+        ElevatedButton.icon(
+          icon: Icon(Icons.image),
+          label: Text('Seleccionar Imagen'),
+          onPressed: _pickImage,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue[800],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return ElevatedButton.icon(
+      icon: Icon(Icons.save),
+      label: Text('Guardar'),
+      onPressed: _saveInventario,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green[700],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+      ),
     );
   }
 }
