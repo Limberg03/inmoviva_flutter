@@ -10,6 +10,7 @@ import 'package:inmoviva/screens/inventario/inventario_form_page.dart'; // Impor
 
 import 'package:inmoviva/screens/busqueda/filtro_busqueda_page.dart';
 import 'package:inmoviva/screens/busqueda/inventario_page.dart';
+import 'package:inmoviva/screens/busqueda/detalles_inventario.dart';
 
 void main() {
   runApp(const AppState());
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
         // Añadimos las rutas para Búsqueda
         '/filtro_busqueda': (_) => FiltroBusquedaPage(),
         '/inventario_page': (_) => InventarioPage(),
+        '/detalles_inventario': (context) => DetallesInventarioPage(),
       },
       theme: ThemeData.light().copyWith(
           scaffoldBackgroundColor: Colors.grey[400],
