@@ -19,13 +19,13 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _direccionController = TextEditingController();
   final _precioController = TextEditingController();
-  final _estadoController = TextEditingController();
   final _superficieController = TextEditingController();
   final _descripcionController = TextEditingController();
   final _nroHabitacionesController = TextEditingController();
   final _nroBanosController = TextEditingController();
   File? _imageFile;
   int? _selectedTipoPropiedadId;
+  String? _selectedEstado;
   final DBHelper _dbHelper = DBHelper();
 
   @override
@@ -34,12 +34,12 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
     if (widget.inventario != null) {
       _direccionController.text = widget.inventario?.direccion ?? '';
       _precioController.text = widget.inventario?.precio?.toString() ?? '';
-      _estadoController.text = widget.inventario?.estado ?? '';
       _superficieController.text = widget.inventario?.superficie?.toString() ?? '';
       _descripcionController.text = widget.inventario?.descripcion ?? '';
       _nroHabitacionesController.text = widget.inventario?.nroHabitaciones?.toString() ?? '';
       _nroBanosController.text = widget.inventario?.nroBanos?.toString() ?? '';
       _selectedTipoPropiedadId = widget.inventario?.tipoPropiedadId;
+      _selectedEstado = widget.inventario?.estado;
       if (widget.inventario?.imagen != null) {
         _imageFile = File(widget.inventario!.imagen!);
       }
@@ -68,7 +68,7 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
         id: widget.inventario?.id,
         direccion: _direccionController.text,
         precio: double.tryParse(_precioController.text),
-        estado: _estadoController.text,
+        estado: _selectedEstado,
         superficie: double.tryParse(_superficieController.text),
         descripcion: _descripcionController.text,
         nroHabitaciones: int.tryParse(_nroHabitacionesController.text),
@@ -113,7 +113,7 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
                   child: _buildTextField(_precioController, 'Precio', 'Por favor ingresa el precio', Icons.attach_money, keyboardType: TextInputType.number),
                 ),
                 _buildCard(
-                  child: _buildTextField(_estadoController, 'Estado', 'Por favor ingresa el estado', Icons.info),
+                  child: _buildEstadoDropdown(), // Usamos el nuevo Dropdown para Estado
                 ),
                 _buildCard(
                   child: _buildTextField(_superficieController, 'Superficie', 'Por favor ingresa la superficie', Icons.square_foot, keyboardType: TextInputType.number),
@@ -198,6 +198,30 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
         padding: const EdgeInsets.all(12.0),
         child: child,
       ),
+    );
+  }
+
+  Widget _buildEstadoDropdown() {
+    return DropdownButtonFormField<String>(
+      value: _selectedEstado,
+      items: ['Libre', 'Vendido', 'Alquilado', 'Anticretico'].map((String estado) {
+        return DropdownMenuItem<String>(
+          value: estado,
+          child: Text(estado),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedEstado = newValue;
+        });
+      },
+      decoration: InputDecoration(
+        labelText: 'Estado',
+        border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.white,
+      ),
+      validator: (value) => value == null ? 'Por favor selecciona un estado' : null,
     );
   }
 
