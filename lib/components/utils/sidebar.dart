@@ -5,6 +5,9 @@ import 'package:inmoviva/screens/tipopropiedad/save_page.dart';
 import 'package:inmoviva/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 
+import 'package:inmoviva/screens/busqueda/inventario_page.dart';
+import 'package:inmoviva/screens/busqueda/filtro_busqueda_page.dart'; // O el nombre y ruta correcta de tu página
+
 class SideBar extends StatelessWidget {
   const SideBar({super.key});
 
@@ -110,13 +113,28 @@ class SideBar extends StatelessWidget {
               onTap: () {
                 bool irALista =
                     true; // Puedes cambiar esta lógica para tomar decisiones
-
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const ListPage(),
                   ),
                 );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.inventory), // Icono de inventario
+              title: const Text('Gestionar Inventario'),
+              onTap: () {
+                // Navegar a la lista de inventarios usando la ruta que definimos en el main
+                Navigator.pushNamed(context, '/inventario_list');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.filter_alt),
+              title: const Text('Búsqueda Avanzada'),
+              onTap: () {
+                // Navegar a la página de búsqueda avanzada y pasar la lista de inventarios
+                Navigator.pushNamed(context, '/inventario_page');
               },
             ),
             ListTile(

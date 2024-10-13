@@ -5,6 +5,12 @@ import 'package:inmoviva/screens/screens.dart';
 import 'package:inmoviva/screens/tipopropiedad/save_page.dart';
 import 'package:inmoviva/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
+import 'package:inmoviva/screens/inventario/inventario_list_page.dart' as inventario; // Importa la página de lista de inventarios
+import 'package:inmoviva/screens/inventario/inventario_form_page.dart'; // Importa la página del formulario de inventario
+
+import 'package:inmoviva/screens/busqueda/filtro_busqueda_page.dart';
+import 'package:inmoviva/screens/busqueda/inventario_page.dart';
+import 'package:inmoviva/screens/busqueda/detalles_inventario.dart';
 
 void main() {
   runApp(const AppState());
@@ -43,12 +49,23 @@ class MyApp extends StatelessWidget {
         /* ruta*/
         'splash': (_) => const SplashScreen(),
         /* ruta*/
-        'login': (_) => const LoginScreen(), /* ruta*/
+        'login': (_) => const LoginScreen(),
+        /* ruta*/
 
         'inicio': (_) => const Inicio(),
 
-        '/save': (_) =>  SavePage(),
-        'perfil': (_)=> const PerfilPage(),
+        '/save': (_) => SavePage(),
+
+        'perfil': (_) => const PerfilPage(),
+
+        // Añadimos las rutas para Inventario
+        '/inventario_list': (_) => inventario.InventarioListPage(),
+        '/inventario_form': (_) => InventarioFormPage(),
+
+        // Añadimos las rutas para Búsqueda
+        '/filtro_busqueda': (_) => FiltroBusquedaPage(),
+        '/inventario_page': (_) => InventarioPage(),
+        '/detalles_inventario': (context) => DetallesInventarioPage(),
       },
       theme: ThemeData.light().copyWith(
           scaffoldBackgroundColor: Colors.grey[400],

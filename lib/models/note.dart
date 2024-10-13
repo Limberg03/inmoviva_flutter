@@ -13,4 +13,13 @@ class Note {
       'descripcion': descripcion,
     };
   }
+
+  // Método para convertir un Map en un objeto Note (al obtener desde la base de datos)
+  factory Note.fromMap(Map<String, dynamic> map) {
+    return Note(
+      id: map['id'], // Obtener el id del mapa
+      nombre: map['nombre'], // Obtener el nombre
+      descripcion: map['descripcion'], // Obtener la descripción si existe
+    );
+  }
 }
