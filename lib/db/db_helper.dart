@@ -29,7 +29,7 @@ class DBHelper {
     // Abrir la base de datos y aplicar migraciones si es necesario
     return await openDatabase(
       dbPath,
-      version: 2, // Cambiamos la versión a 2 para realizar migraciones
+      version: 3, // Cambiamos la versión a 3 para realizar la migración de la nueva columna
       onCreate: (db, version) async {
         // Creamos las tablas iniciales
         await db.execute('''
@@ -51,19 +51,29 @@ class DBHelper {
             descripcion TEXT,
             nro_habitaciones INTEGER,
             nro_banos INTEGER,
-            imagen TEXT,
+            imagenes TEXT, -- Nueva columna para almacenar las imágenes
             tipo_propiedad_id INTEGER,
             FOREIGN KEY (tipo_propiedad_id) REFERENCES notes(id)
           )
         ''');
       },
-      // En caso de actualización de versión de la base de datos, ejecutamos migraciones
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
-          // Si estamos migrando de la versión 1 a la versión 2, añadimos nuevas columnas o tablas
+          // Migración de la versión 1 a la 2
           await db.execute('''
             ALTER TABLE inventarios ADD COLUMN tipo_propiedad_id INTEGER;
           ''');
+        }
+        if (oldVersion < 3) {
+          // Verificar si la columna imagenes ya existe antes de agregarla
+          var result = await db.rawQuery("PRAGMA table_info(inventarios)"); 
+          var columnExists = result.any((column) => column['name'] == 'imagenes');
+          
+          if (!columnExists) {
+            await db.execute('''
+              ALTER TABLE inventarios ADD COLUMN imagenes TEXT;
+            ''');
+          }
         }
       },
     );

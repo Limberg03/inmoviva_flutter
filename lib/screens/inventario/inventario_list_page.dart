@@ -15,24 +15,24 @@ class _InventarioListPageState extends State<InventarioListPage> {
   List<Inventario> filteredInventarios = [];
   final DBHelper _dbHelper = DBHelper();
   String searchQuery = '';
-  bool isLoading = false; // Para gestionar la carga de inventarios
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _loadInventarios(); 
+    _loadInventarios();
   }
 
   Future<void> _loadInventarios() async {
     setState(() {
-      isLoading = true; // Mostrar indicador de carga
+      isLoading = true;
     });
 
     List<Inventario> loadedInventarios = await _dbHelper.getInventarios();
     setState(() {
       inventarios = loadedInventarios;
       filteredInventarios = loadedInventarios;
-      isLoading = false; // Ocultar indicador de carga
+      isLoading = false;
     });
   }
 
@@ -56,7 +56,6 @@ class _InventarioListPageState extends State<InventarioListPage> {
     return await _dbHelper.getTipoPropiedadById(id);
   }
 
-  // Confirmación de eliminación
   void _confirmDelete(BuildContext context, int inventarioId) {
     showDialog(
       context: context,
@@ -144,7 +143,7 @@ class _InventarioListPageState extends State<InventarioListPage> {
                                       _confirmDelete(context, inventario.id!);
                                     },
                                     child: ListTile(
-                                      leading: _buildImageThumbnail(inventario),
+                                      leading: _buildImageThumbnails(inventario),
                                       title: Text(
                                         inventario.direccion ?? 'Sin dirección',
                                         style: TextStyle(
@@ -209,24 +208,32 @@ class _InventarioListPageState extends State<InventarioListPage> {
     );
   }
 
-  Widget _buildImageThumbnail(Inventario inventario) {
-    return Container(
-      width: 70,
-      height: 70,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        color: Colors.grey[300],
-      ),
-      child: inventario.imagen != null
-          ? ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Image.file(
-                File(inventario.imagen!),
-                fit: BoxFit.cover,
-              ),
-            )
-          : Icon(Icons.image, color: Colors.grey[600]),
-    );
+  // Método para mostrar múltiples imágenes
+  Widget _buildImageThumbnails(Inventario inventario) {
+    return inventario.imagenes != null && inventario.imagenes!.isNotEmpty
+        ? SizedBox(
+            height: 70,
+            width: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: inventario.imagenes!.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.file(
+                      File(inventario.imagenes![index]),
+                      fit: BoxFit.cover,
+                      width: 60,
+                      height: 60,
+                    ),
+                  ),
+                );
+              },
+            ),
+          )
+        : Icon(Icons.image, color: Colors.grey[600]);
   }
 
   Widget _buildDetails(Inventario inventario, Note? tipoPropiedad) {

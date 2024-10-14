@@ -23,7 +23,7 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
   final _descripcionController = TextEditingController();
   final _nroHabitacionesController = TextEditingController();
   final _nroBanosController = TextEditingController();
-  File? _imageFile;
+  List<File> _imageFiles = []; // Lista para manejar varias imágenes
   int? _selectedTipoPropiedadId;
   String? _selectedEstado;
   final DBHelper _dbHelper = DBHelper();
@@ -40,20 +40,21 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
       _nroBanosController.text = widget.inventario?.nroBanos?.toString() ?? '';
       _selectedTipoPropiedadId = widget.inventario?.tipoPropiedadId;
       _selectedEstado = widget.inventario?.estado;
-      if (widget.inventario?.imagen != null) {
-        _imageFile = File(widget.inventario!.imagen!);
+      if (widget.inventario?.imagenes != null) {
+        _imageFiles = widget.inventario!.imagenes!.map((imagePath) => File(imagePath)).toList();
       }
     }
   }
 
-  Future<void> _pickImage() async {
+  Future<void> _pickImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
+      allowMultiple: true, // Permitir selección múltiple
     );
 
     if (result != null) {
       setState(() {
-        _imageFile = File(result.files.single.path!);
+        _imageFiles = result.paths.map((path) => File(path!)).toList();
       });
     }
   }
@@ -73,7 +74,7 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
         descripcion: _descripcionController.text,
         nroHabitaciones: int.tryParse(_nroHabitacionesController.text),
         nroBanos: int.tryParse(_nroBanosController.text),
-        imagen: _imageFile?.path,
+        imagenes: _imageFiles.map((file) => file.path).toList(), // Almacenamos la lista de rutas de imágenes
         tipoPropiedadId: _selectedTipoPropiedadId,
         fechaPublicacion: DateTime.now().toIso8601String(),
       );
@@ -113,7 +114,7 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
                   child: _buildTextField(_precioController, 'Precio', 'Por favor ingresa el precio', Icons.attach_money, keyboardType: TextInputType.number),
                 ),
                 _buildCard(
-                  child: _buildEstadoDropdown(), // Usamos el nuevo Dropdown para Estado
+                  child: _buildEstadoDropdown(),
                 ),
                 _buildCard(
                   child: _buildTextField(_superficieController, 'Superficie', 'Por favor ingresa la superficie', Icons.square_foot, keyboardType: TextInputType.number),
@@ -228,17 +229,34 @@ class _InventarioFormPageState extends State<InventarioFormPage> {
   Widget _buildImagePicker() {
     return Column(
       children: [
-        _imageFile != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.file(_imageFile!, width: 150, height: 150, fit: BoxFit.cover),
+        _imageFiles.isNotEmpty
+            ? SizedBox(
+                height: 150,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _imageFiles.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.file(
+                          _imageFiles[index],
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               )
             : Text('Ninguna imagen seleccionada'),
         SizedBox(height: 20),
         ElevatedButton.icon(
           icon: Icon(Icons.image),
-          label: Text('Seleccionar Imagen'),
-          onPressed: _pickImage,
+          label: Text('Seleccionar Imágenes'),
+          onPressed: _pickImages,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.blue[800],
             shape: RoundedRectangleBorder(
