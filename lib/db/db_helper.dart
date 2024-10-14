@@ -65,10 +65,15 @@ class DBHelper {
           ''');
         }
         if (oldVersion < 3) {
-          // Migración de la versión 2 a la 3 para añadir la columna imagenes
-          await db.execute('''
-            ALTER TABLE inventarios ADD COLUMN imagenes TEXT;
-          ''');
+          // Verificar si la columna imagenes ya existe antes de agregarla
+          var result = await db.rawQuery("PRAGMA table_info(inventarios)"); 
+          var columnExists = result.any((column) => column['name'] == 'imagenes');
+          
+          if (!columnExists) {
+            await db.execute('''
+              ALTER TABLE inventarios ADD COLUMN imagenes TEXT;
+            ''');
+          }
         }
       },
     );
