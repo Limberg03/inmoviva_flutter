@@ -96,7 +96,10 @@ class _DetallesInventarioPageState extends State<DetallesInventarioPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FullScreenImagePage(imagePath: inventario.imagenes![index]),
+                        builder: (context) => FullScreenImagePage(
+                          imagePaths: inventario.imagenes!,
+                          initialIndex: index,
+                        ),
                       ),
                     );
                   },
@@ -163,10 +166,32 @@ class _DetallesInventarioPageState extends State<DetallesInventarioPage> {
   }
 }
 
-class FullScreenImagePage extends StatelessWidget {
-  final String imagePath;
+class FullScreenImagePage extends StatefulWidget {
+  final List<String> imagePaths;
+  final int initialIndex;
 
-  FullScreenImagePage({required this.imagePath});
+  FullScreenImagePage({required this.imagePaths, required this.initialIndex});
+
+  @override
+  _FullScreenImagePageState createState() => _FullScreenImagePageState();
+}
+
+class _FullScreenImagePageState extends State<FullScreenImagePage> {
+  late PageController _pageController;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: widget.initialIndex);
+    _currentPage = widget.initialIndex;
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -187,13 +212,58 @@ class FullScreenImagePage extends StatelessWidget {
         ),
       ),
       backgroundColor: Colors.black,
-      body: Center(
-        child: Image.file(
-          File(imagePath),
-          fit: BoxFit.contain,
-          width: double.infinity,
-          height: double.infinity,
-        ),
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+              });
+            },
+            itemCount: widget.imagePaths.length,
+            itemBuilder: (context, index) {
+              return Center(
+                child: Image.file(
+                  File(widget.imagePaths[index]),
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              );
+            },
+          ),
+          // Flecha para ir a la imagen anterior
+          if (_currentPage > 0)
+            Positioned(
+              left: 20,
+              top: MediaQuery.of(context).size.height / 2 - 40,
+              child: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+                onPressed: () {
+                  _pageController.previousPage(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+              ),
+            ),
+          // Flecha para ir a la imagen siguiente
+          if (_currentPage < widget.imagePaths.length - 1)
+            Positioned(
+              right: 20,
+              top: MediaQuery.of(context).size.height / 2 - 40,
+              child: IconButton(
+                icon: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 30),
+                onPressed: () {
+                  _pageController.nextPage(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+              ),
+            ),
+        ],
       ),
     );
   }
