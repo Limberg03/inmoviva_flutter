@@ -117,7 +117,7 @@ class _InventarioListPageState extends State<InventarioPage> {
                   padding: const EdgeInsets.all(8.0),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.65, // Ajusté el aspecto para mejorar el diseño
+                    childAspectRatio: 0.65,
                     crossAxisSpacing: 8.0,
                     mainAxisSpacing: 8.0,
                   ),
@@ -156,46 +156,33 @@ class _InventarioListPageState extends State<InventarioPage> {
       },
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12), // Borde más redondeado
+          borderRadius: BorderRadius.circular(12),
         ),
         elevation: 4,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagen de la propiedad
+            // Mostrar las imágenes
             ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              child: inventario.imagen != null && inventario.imagen!.isNotEmpty
-                  ? Image.file(
-                      File(inventario.imagen!),
-                      fit: BoxFit.cover,
-                      height: 120, // Tamaño de la imagen ajustado
-                      width: double.infinity,
-                    )
-                  : Container(
-                      height: 120,
-                      color: Colors.grey[300],
-                      child: Icon(Icons.image, size: 60, color: Colors.grey), // Icono ajustado
-                    ),
+              child: _buildImageThumbnails(inventario), // Cambiamos aquí
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Dirección
                   Text(
                     inventario.direccion ?? 'Sin dirección',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 13, // Tamaño de la fuente mejorado
+                      fontSize: 13,
                       color: Colors.blueGrey[800],
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 4),
-                  // Estado
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     decoration: BoxDecoration(
@@ -211,17 +198,15 @@ class _InventarioListPageState extends State<InventarioPage> {
                     ),
                   ),
                   SizedBox(height: 4),
-                  // Precio
                   Text(
                     'Precio: \$${inventario.precio?.toStringAsFixed(2) ?? "0.00"}',
                     style: TextStyle(
                       color: Colors.green[700],
-                      fontSize: 12, // Tamaño de la fuente ajustado
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   SizedBox(height: 4),
-                  // Superficie
                   Text(
                     'Superficie: ${inventario.superficie?.toStringAsFixed(2)} m²',
                     style: TextStyle(
@@ -230,12 +215,11 @@ class _InventarioListPageState extends State<InventarioPage> {
                     ),
                   ),
                   SizedBox(height: 6),
-                  // Descripción
                   Text(
                     inventario.descripcion ?? 'Sin descripción',
                     style: TextStyle(
                       color: Colors.grey[700],
-                      fontSize: 11, // Ajuste en el tamaño de la fuente
+                      fontSize: 11,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -263,5 +247,36 @@ class _InventarioListPageState extends State<InventarioPage> {
         ),
       ),
     );
+  }
+
+  // Método para mostrar múltiples imágenes
+  Widget _buildImageThumbnails(Inventario inventario) {
+    return inventario.imagenes != null && inventario.imagenes!.isNotEmpty
+        ? SizedBox(
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: inventario.imagenes!.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.file(
+                      File(inventario.imagenes![index]),
+                      fit: BoxFit.cover,
+                      width: 100,
+                      height: 120,
+                    ),
+                  ),
+                );
+              },
+            ),
+          )
+        : Container(
+            height: 120,
+            color: Colors.grey[300],
+            child: Icon(Icons.image, size: 60, color: Colors.grey),
+          );
   }
 }
