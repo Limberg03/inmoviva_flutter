@@ -5,12 +5,15 @@ import 'package:inmoviva/screens/screens.dart';
 import 'package:inmoviva/screens/tipopropiedad/save_page.dart';
 import 'package:inmoviva/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
-import 'package:inmoviva/screens/inventario/inventario_list_page.dart' as inventario; // Importa la página de lista de inventarios
-import 'package:inmoviva/screens/inventario/inventario_form_page.dart'; // Importa la página del formulario de inventario
-
+import 'package:inmoviva/screens/inventario/inventario_list_page.dart' as inventario;
+import 'package:inmoviva/screens/inventario/inventario_form_page.dart';
 import 'package:inmoviva/screens/busqueda/filtro_busqueda_page.dart';
 import 'package:inmoviva/screens/busqueda/inventario_page.dart';
 import 'package:inmoviva/screens/busqueda/detalles_inventario.dart';
+
+// Importamos las páginas para gestionar ciudades
+import 'package:inmoviva/screens/ciudad/save_page_ciudad.dart';
+import 'package:inmoviva/screens/ciudad/list_page_ciudad.dart';
 
 void main() {
   runApp(const AppState());
@@ -27,7 +30,6 @@ class _AppStateState extends State<AppState> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      // para consumir todos los servicios
       providers: [ChangeNotifierProvider(create: (_) => AuthService())],
       child: const MyApp(),
     );
@@ -37,7 +39,6 @@ class _AppStateState extends State<AppState> {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,26 +47,24 @@ class MyApp extends StatelessWidget {
       initialRoute: 'splash',
       routes: {
         'home': (_) => const HomeScreen(),
-        /* ruta*/
         'splash': (_) => const SplashScreen(),
-        /* ruta*/
         'login': (_) => const LoginScreen(),
-        /* ruta*/
-
         'inicio': (_) => const Inicio(),
-
         '/save': (_) => SavePage(),
-
         'perfil': (_) => const PerfilPage(),
-
-        // Añadimos las rutas para Inventario
+        
+        // Rutas de Inventario
         '/inventario_list': (_) => inventario.InventarioListPage(),
         '/inventario_form': (_) => InventarioFormPage(),
 
-        // Añadimos las rutas para Búsqueda
+        // Rutas de Búsqueda
         '/filtro_busqueda': (_) => FiltroBusquedaPage(),
         '/inventario_page': (_) => InventarioPage(),
         '/detalles_inventario': (context) => DetallesInventarioPage(),
+        
+        // Añadimos las rutas para gestionar ciudades
+        '/ciudad_list': (_) => ListPageCiudad(),
+        '/ciudad_save': (_) => SavePageCiudad(),
       },
       theme: ThemeData.light().copyWith(
           scaffoldBackgroundColor: Colors.grey[400],

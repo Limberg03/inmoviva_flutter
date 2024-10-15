@@ -34,14 +34,6 @@ class SideBar extends StatelessWidget {
               accountName: Text(auth.user.name),
               accountEmail: Text(auth.user.email),
               currentAccountPicture: CircleAvatar(
-                // child: ClipOval(
-                //   child: Image.network(
-                //     'https://c0.klipartz.com/pngpicture/266/82/gratis-png-programador-iconos-de-computadora-programacion-de-computadora-avatar-lenguaje-de-programacion-avatar.png',
-                //     width: 90,
-                //     height: 90,
-                //     fit: BoxFit.cover,
-                //   ),
-                // ),
                 child: ClipOval(
                   child: Image.asset(
                     'assets/utils/perfil.png', // Ruta de la imagen en los assets locales
@@ -111,14 +103,20 @@ class SideBar extends StatelessWidget {
               leading: const Icon(Icons.business),
               title: const Text('Gestionar Tipo de Propiedad'),
               onTap: () {
-                bool irALista =
-                    true; // Puedes cambiar esta lógica para tomar decisiones
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const ListPage(),
                   ),
                 );
+              },
+            ),
+            // Aquí se añade el apartado de "Gestionar Ciudad"
+            ListTile(
+              leading: const Icon(Icons.location_city), // Icono para gestionar ciudades
+              title: const Text('Gestionar Ciudad'),
+              onTap: () {
+                Navigator.pushNamed(context, '/ciudad_list'); // Ruta que definimos para ciudades
               },
             ),
             ListTile(
