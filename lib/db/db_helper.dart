@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../models/note.dart';
 import '../models/inventario.dart';
+//import '../models/propiedad.dart';
+import 'package:inmoviva/models/propiedad.dart';
 
 class DBHelper {
   static Database? _database;
@@ -55,7 +57,25 @@ class DBHelper {
             tipo_propiedad_id INTEGER,
             FOREIGN KEY (tipo_propiedad_id) REFERENCES notes(id)
           )
+          ''');
+          await db.execute('''
+          CREATE TABLE propiedades (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT,
+            fecha TEXT,
+            direccion TEXT,
+            precio REAL,
+            estado TEXT,
+            superficie REAL,
+            descripcion TEXT,
+            nro_habitaciones INTEGER,
+            nro_banos INTEGER,
+            imagen TEXT,
+            tipo_propiedad_id INTEGER,
+            FOREIGN KEY (tipo_propiedad_id) REFERENCES notes(id)
+          )
         ''');
+
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
@@ -99,6 +119,23 @@ class DBHelper {
     });
   }
 
+  //para obtener las propiedades
+  //Future<List<Map<String, dynamic>>> getPropiedades() async {
+    //final db = await database;
+    //return await db.query('propiedades');
+  //}
+  // Método en la clase DBHelper para obtener todas las propiedades
+  Future<List<Propiedad>> getPropiedades() async {
+    final db = await database; // Asegúrate de que esta variable esté definida correctamente.
+    final List<Map<String, dynamic>> maps = await db.query('propiedades');
+
+    return List.generate(maps.length, (i) {
+      return Propiedad.fromMap(maps[i]); // Suponiendo que tienes este método en el modelo Propiedad.
+    });
+  }
+
+
+
   // Obtener el tipo de propiedad (Note) por su ID
   Future<Note?> getTipoPropiedadById(int id) async {
     final db = await database;
@@ -135,4 +172,23 @@ class DBHelper {
       whereArgs: [id],
     );
   }
+
+  // Método para agregar una propiedad
+  Future<int> addPropiedad(Map<String, dynamic> propiedad) async {
+    final db = await database;
+    return await db.insert('propiedades', propiedad);
+  }
+
+  // Método para editar una propiedad
+  Future<int> updatePropiedad(int id, Map<String, dynamic> propiedad) async {
+    final db = await database;
+    return await db.update('propiedades', propiedad, where: 'id = ?', whereArgs: [id]);
+  }
+
+  // Método para eliminar una propiedad
+  Future<int> deletePropiedad(int id) async {
+    final db = await database;
+    return await db.delete('propiedades', where: 'id = ?', whereArgs: [id]);
+  }
+
 }

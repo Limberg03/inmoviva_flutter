@@ -14,9 +14,28 @@ import 'package:inmoviva/screens/busqueda/detalles_inventario.dart';
 // Importamos las páginas para gestionar ciudades
 import 'package:inmoviva/screens/ciudad/save_page_ciudad.dart';
 import 'package:inmoviva/screens/ciudad/list_page_ciudad.dart';
+import 'package:inmoviva/screens/propiedad/propiedad_form_page.dart'; // Asegúrate de usar la ruta correcta
+import 'package:inmoviva/screens/propiedad/propiedad_list_page.dart' as propiedad; 
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:intl/intl.dart';
 
 void main() {
+  tz.initializeTimeZones();
   runApp(const AppState());
+}
+
+// Función para obtener la hora de Bolivia
+DateTime obtenerHoraBolivia() {
+  final laPaz = tz.getLocation('America/La_Paz');
+  final horaBolivia = tz.TZDateTime.now(laPaz);
+  return horaBolivia;
+}
+
+// Función para formatear la hora de Bolivia
+String formatearHoraBolivia() {
+  final horaBolivia = obtenerHoraBolivia();
+  return DateFormat('yyyy-MM-dd HH:mm:ss').format(horaBolivia);
 }
 
 class AppState extends StatefulWidget {
@@ -57,6 +76,8 @@ class MyApp extends StatelessWidget {
         '/inventario_list': (_) => inventario.InventarioListPage(),
         '/inventario_form': (_) => InventarioFormPage(),
 
+        '/propiedad_list': (_) => propiedad.PropiedadListPage(),
+        '/propiedad_form': (_) => PropiedadFormPage(),
         // Rutas de Búsqueda
         '/filtro_busqueda': (_) => FiltroBusquedaPage(),
         '/inventario_page': (_) => InventarioPage(),
@@ -65,6 +86,8 @@ class MyApp extends StatelessWidget {
         // Añadimos las rutas para gestionar ciudades
         '/ciudad_list': (_) => ListPageCiudad(),
         '/ciudad_save': (_) => SavePageCiudad(),
+
+        
       },
       theme: ThemeData.light().copyWith(
           scaffoldBackgroundColor: Colors.grey[400],
