@@ -113,6 +113,14 @@ class SideBar extends StatelessWidget {
                 );
               },
             ),
+            // Aquí se añade el apartado de "Gestionar Ciudad"
+            ListTile(
+              leading: const Icon(Icons.location_city), // Icono para gestionar ciudades
+              title: const Text('Gestionar Ciudad'),
+              onTap: () {
+                Navigator.pushNamed(context, '/ciudad_list'); // Ruta que definimos para ciudades
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.inventory), // Icono de inventario
               title: const Text('Gestionar Inventario'),
