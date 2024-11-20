@@ -1,6 +1,7 @@
 class Inventario {
   int? id;
   String? fechaPublicacion;
+  
   String? direccion;
   double? precio;
   String? estado;

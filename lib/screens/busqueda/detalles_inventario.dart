@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:inmoviva/models/inventario.dart';
+import 'package:url_launcher/url_launcher.dart'; // Importa el paquete
 
 class DetallesInventarioPage extends StatefulWidget {
   @override
@@ -19,7 +20,8 @@ class _DetallesInventarioPageState extends State<DetallesInventarioPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Inventario inventario = ModalRoute.of(context)?.settings.arguments as Inventario;
+    final Inventario inventario =
+        ModalRoute.of(context)?.settings.arguments as Inventario;
 
     return Scaffold(
       appBar: AppBar(
@@ -42,11 +44,23 @@ class _DetallesInventarioPageState extends State<DetallesInventarioPage> {
             children: [
               _buildImageSlider(inventario),
               SizedBox(height: 20),
-              _buildInfo('Dirección', inventario.direccion ?? 'No especificada', Icons.location_on),
-              _buildInfo('Estado', inventario.estado ?? 'No disponible', Icons.info_outline),
-              _buildInfo('Precio', '\$${inventario.precio?.toStringAsFixed(2) ?? '0.00'}', Icons.attach_money, textColor: Colors.green[700]),
-              _buildInfo('Superficie', '${inventario.superficie?.toStringAsFixed(2)} m²', Icons.square_foot),
-              _buildInfo('Descripción', inventario.descripcion ?? 'Sin descripción', Icons.description),
+              _buildInfo('Dirección', inventario.direccion ?? 'No especificada',
+                  Icons.location_on),
+              _buildInfo('Estado', inventario.estado ?? 'No disponible',
+                  Icons.info_outline),
+              _buildInfo(
+                  'Precio',
+                  '\$${inventario.precio?.toStringAsFixed(2) ?? '0.00'}',
+                  Icons.attach_money,
+                  textColor: Colors.green[700]),
+              _buildInfo(
+                  'Superficie',
+                  '${inventario.superficie?.toStringAsFixed(2)} m²',
+                  Icons.square_foot),
+              _buildInfo(
+                  'Descripción',
+                  inventario.descripcion ?? 'Sin descripción',
+                  Icons.description),
             ],
           ),
         ),
@@ -54,7 +68,19 @@ class _DetallesInventarioPageState extends State<DetallesInventarioPage> {
     );
   }
 
-  Widget _buildInfo(String label, String value, IconData icon, {Color? textColor}) {
+  Future<void> _launchURL(String url) async {
+    if (Platform.isWindows) {
+      // En Windows, abre el navegador con el comando predeterminado
+      await Process.start('cmd', ['/c', 'start', url]);
+    } else if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'No se puede abrir la URL $url';
+    }
+  }
+
+  Widget _buildInfo(String label, String value, IconData icon,
+      {Color? textColor}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -66,10 +92,27 @@ class _DetallesInventarioPageState extends State<DetallesInventarioPage> {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: TextStyle(fontSize: 16, color: textColor ?? Colors.grey[800]),
-            ),
+            child: label == 'Dirección'
+                ? GestureDetector(
+                    onTap: () {
+                      final url =
+                          'https://www.google.com/maps?q=$value'; // URL de Google Maps
+                      _launchURL(url); // Llama a la función que lanza la URL
+                    },
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: textColor ??
+                              Colors
+                                  .blue), // Estilo en azul para indicar que es clicable
+                    ),
+                  )
+                : Text(
+                    value,
+                    style: TextStyle(
+                        fontSize: 16, color: textColor ?? Colors.grey[800]),
+                  ),
           ),
         ],
       ),
@@ -137,7 +180,9 @@ class _DetallesInventarioPageState extends State<DetallesInventarioPage> {
                   height: _currentImageIndex == index ? 12.0 : 8.0,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _currentImageIndex == index ? Colors.blueAccent : Colors.grey,
+                    color: _currentImageIndex == index
+                        ? Colors.blueAccent
+                        : Colors.grey,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black26,
@@ -254,7 +299,8 @@ class _FullScreenImagePageState extends State<FullScreenImagePage> {
               right: 20,
               top: MediaQuery.of(context).size.height / 2 - 40,
               child: IconButton(
-                icon: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 30),
+                icon: Icon(Icons.arrow_forward_ios,
+                    color: Colors.white, size: 30),
                 onPressed: () {
                   _pageController.nextPage(
                     duration: Duration(milliseconds: 300),

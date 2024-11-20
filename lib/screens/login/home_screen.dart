@@ -14,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final storage = const FlutterSecureStorage();
-  
+
   @override
   void initState() {
     readToken();
@@ -32,29 +32,29 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: const SideBar(),
       appBar: AppBar(
-      title: const Text('Home'),
-      backgroundColor: Colors.blue[700],
-      actions: [
-      // Círculo que redirecciona al perfil
-      Padding(
-        padding: const EdgeInsets.only(right: 16.0),
-        child: GestureDetector(
-          onTap: () {
-            // Navegar a la página de perfil
-            Navigator.of(context).push(
-              MaterialPageRoute(
-              builder: (context) => const PerfilPage(),
+        title: const Text('Home'),
+        backgroundColor: Colors.blue[700],
+        actions: [
+          // Círculo que redirecciona al perfil
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: GestureDetector(
+              onTap: () {
+                // Navegar a la página de perfil
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const PerfilPage(),
+                  ),
+                );
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.blue[700],
+                child: const Icon(Icons.person, color: Colors.white),
               ),
-            );
-          },
-          child: CircleAvatar(
-            backgroundColor: Colors.blue[700],
-            child: const Icon(Icons.person, color: Colors.white),
+            ),
           ),
-        ),
+        ],
       ),
-    ],
-  ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildSectionTitle('Propiedades en Venta'),
             _buildHorizontalList([
               'Casa en Santa Cruz ',
-              'Departamento en Cochabamba',            
+              'Departamento en Cochabamba',
             ]),
 
             // Sección de Propiedades en Alquiler

@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 
 import 'package:inmoviva/screens/busqueda/inventario_page.dart';
 import 'package:inmoviva/screens/busqueda/filtro_busqueda_page.dart';
+import 'package:inmoviva/screens/contrato/contrato_save_page.dart';
+
 
 class SideBar extends StatelessWidget {
   const SideBar({super.key});
@@ -145,6 +147,19 @@ class SideBar extends StatelessWidget {
                 Navigator.pushNamed(context, '/propiedad_list'); // Cambia esta ruta según corresponda
               },
             ),
+            ListTile(
+  leading: const Icon(Icons.assignment),
+  title: const Text('Contrato Compra-Venta'),
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ContratoSavePage(),
+      ),
+    );
+  },
+),
+
             ListTile(
                 leading: const Icon(Icons.share),
                 title: const Text('Compartir'),
