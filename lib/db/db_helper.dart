@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../models/note.dart';
 import '../models/inventario.dart';
+import '../models/venta.dart';
+import '../models/anticretico.dart';
 //import '../models/propiedad.dart';
 import 'package:inmoviva/models/propiedad.dart';
 
@@ -31,7 +33,7 @@ class DBHelper {
     // Abrir la base de datos y aplicar migraciones si es necesario
     return await openDatabase(
       dbPath,
-      version: 3, // Cambiamos la versión a 3 para realizar la migración de la nueva columna
+      version: 4, // Cambiamos la versión a 3 para realizar la migración de la nueva columna
       onCreate: (db, version) async {
         // Creamos las tablas iniciales
         await db.execute('''
@@ -58,6 +60,7 @@ class DBHelper {
             FOREIGN KEY (tipo_propiedad_id) REFERENCES notes(id)
           )
           ''');
+         
           await db.execute('''
           CREATE TABLE propiedades (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -74,7 +77,35 @@ class DBHelper {
             tipo_propiedad_id INTEGER,
             FOREIGN KEY (tipo_propiedad_id) REFERENCES notes(id)
           )
-        ''');
+          ''');
+          
+           await db.execute('''
+          CREATE TABLE ventas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            inventario_id INTEGER,
+            comprador TEXT,
+            precio REAL,
+            metodo_pago TEXT,
+            fecha_transaccion TEXT,
+            documento_pdf TEXT,
+            FOREIGN KEY (inventario_id) REFERENCES inventarios(id)
+          )
+          ''');
+
+          await db.execute('''
+          CREATE TABLE anticreticos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            inventario_id INTEGER,
+            arrendatario TEXT,
+            monto_anticretico REAL,
+            metodo_pago TEXT,
+            fecha_inicio TEXT,
+            fecha_fin TEXT,
+            contrato_pdf TEXT,
+            FOREIGN KEY (inventario_id) REFERENCES inventarios(id)
+          );
+          ''');
+
 
       },
       onUpgrade: (db, oldVersion, newVersion) async {
@@ -94,6 +125,36 @@ class DBHelper {
               ALTER TABLE inventarios ADD COLUMN imagenes TEXT;
             ''');
           }
+        }
+
+        if (oldVersion < 4) {
+          // Crear las nuevas tablas si aún no existen
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS ventas (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              inventario_id INTEGER,
+              comprador TEXT,
+              precio REAL,
+              metodo_pago TEXT,
+              fecha_transaccion TEXT,
+              documento_pdf TEXT,
+              FOREIGN KEY (inventario_id) REFERENCES inventarios(id)
+            )
+          ''');
+
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS anticreticos (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              inventario_id INTEGER,
+              arrendatario TEXT,
+              monto_anticretico REAL,
+              metodo_pago TEXT,
+              fecha_inicio TEXT,
+              fecha_fin TEXT,
+              contrato_pdf TEXT,
+              FOREIGN KEY (inventario_id) REFERENCES inventarios(id)
+            )
+          ''');
         }
       },
     );
@@ -190,5 +251,68 @@ class DBHelper {
     final db = await database;
     return await db.delete('propiedades', where: 'id = ?', whereArgs: [id]);
   }
+
+  //metodos de ventas....
+  Future<void> insertVenta(Venta venta) async {
+  final db = await database;
+  await db.insert(
+    'ventas',
+    venta.toMap(),
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}/*
+Future<List<Venta>> getVentas() async {
+  final db = await database;
+  final List<Map<String, dynamic>> maps = await db.query('ventas');
+
+  return List.generate(maps.length, (i) {
+    return Venta.fromMap(maps[i]);
+  });
+}*/
+Future<List<Venta>> getVentas() async {
+  final db = await database;
+  final List<Map<String, dynamic>> maps = await db.query('ventas');
+  // Si no hay datos, devuelve una lista vacía
+  return maps.isNotEmpty
+      ? List.generate(maps.length, (i) => Venta.fromMap(maps[i]))
+      : [];
+}
+
+Future<void> deleteVenta(int id) async {
+  final db = await database;
+  await db.delete(
+    'ventas',
+    where: 'id = ?',
+    whereArgs: [id],
+  );
+}
+//para anticretico......
+Future<void> insertAnticretico(Anticretico anticretico) async {
+  final db = await database;
+  await db.insert(
+    'anticreticos', // Nombre de la tabla
+    anticretico.toMap(), // Convertimos el objeto a mapa
+    conflictAlgorithm: ConflictAlgorithm.replace, // En caso de conflicto, reemplazamos el registro
+  );
+}
+Future<List<Anticretico>> getAnticreticos() async {
+  final db = await database;
+  final List<Map<String, dynamic>> maps = await db.query('anticreticos'); // Consultamos la tabla 'anticreticos'
+
+  // Si hay datos, los transformamos a una lista de objetos Anticretico
+  return maps.isNotEmpty
+      ? List.generate(maps.length, (i) => Anticretico.fromMap(maps[i]))
+      : [];
+}
+Future<void> deleteAnticretico(int id) async {
+  final db = await database;
+  await db.delete(
+    'anticreticos', // Nombre de la tabla
+    where: 'id = ?', // Condición para identificar el anticrético a eliminar
+    whereArgs: [id], // Argumento que pasamos para el lugar del '?'
+  );
+}
+
+
 
 }

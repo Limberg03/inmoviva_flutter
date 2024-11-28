@@ -10,7 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:inmoviva/screens/busqueda/inventario_page.dart';
 import 'package:inmoviva/screens/busqueda/filtro_busqueda_page.dart';
 import 'package:inmoviva/screens/contrato/contrato_save_page.dart';
-
+import 'package:inmoviva/screens/pago/simulated_payment_page.dart';
+import 'package:inmoviva/screens/venta/venta_list_page.dart';
 
 class SideBar extends StatelessWidget {
   const SideBar({super.key});
@@ -148,18 +149,42 @@ class SideBar extends StatelessWidget {
               },
             ),
             ListTile(
-  leading: const Icon(Icons.assignment),
-  title: const Text('Contrato Compra-Venta'),
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ContratoSavePage(),
-      ),
-    );
-  },
-),
-
+              leading: const Icon(Icons.assignment),
+              title: const Text('Contrato Compra-Venta'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ContratoSavePage(),
+                  ),
+                  
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.assignment),
+              title: const Text('Gestionar Venta'),
+              onTap: () {
+                // Navegar a la lista de propiedades usando la ruta que definimos en el main
+                Navigator.pushNamed(context, '/ventas'); // Cambia esta ruta según corresponda
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.assignment),
+              title: const Text('Gestionar Anticretico'),
+              onTap: () {
+                // Navegar a la lista de propiedades usando la ruta que definimos en el main
+                Navigator.pushNamed(context, '/anticreticos'); // Cambia esta ruta según corresponda
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.payment),
+              title: const Text('Metodo de Pago'),
+              onTap: () {
+                Navigator.pushNamed(context, '/simulated_payment');
+              },
+            ),
+ 
             ListTile(
                 leading: const Icon(Icons.share),
                 title: const Text('Compartir'),
@@ -169,6 +194,9 @@ class SideBar extends StatelessWidget {
           ]);
         }
       }),
+
+     
+
     );
   }
 }

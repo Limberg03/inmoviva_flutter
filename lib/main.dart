@@ -19,7 +19,11 @@ import 'package:inmoviva/screens/propiedad/propiedad_list_page.dart' as propieda
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:intl/intl.dart';
-
+import 'package:inmoviva/screens/pago/simulated_payment_page.dart';
+import 'package:inmoviva/screens/venta/venta_list_page.dart';
+import 'package:inmoviva/screens/venta/venta_form_page.dart';
+import 'package:inmoviva/screens/anticretico/anticretico_list_page.dart';
+import 'package:inmoviva/screens/anticretico/anticretico_form_page.dart';
 void main() {
   tz.initializeTimeZones();
   runApp(const AppState());
@@ -86,6 +90,13 @@ class MyApp extends StatelessWidget {
         // Añadimos las rutas para gestionar ciudades
         '/ciudad_list': (_) => ListPageCiudad(),
         '/ciudad_save': (_) => SavePageCiudad(),
+
+        // Nueva ruta para simulación de pago
+        '/simulated_payment': (_) => SimulatedPaymentPage(),
+        '/ventas': (_) => VentaListPage(),
+        '/venta_form': (_) => VentaFormPage(),
+        '/anticreticos': (_) => AnticreticoListPage(),
+        '/anticretico_form': (_) => AnticreticoFormPage(),
 
         
       },
